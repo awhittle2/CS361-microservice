@@ -1,6 +1,6 @@
 # Transactions RESTful API
 
-In the directory, I have stored 3 different scripts which effectively perform all the same tasks. It incudes the relevant helper functions and calls to GET, POST, PUT, and DELETE data from the transactions.json file, which stores all transactions that the user inputs.
+In the directory, I have stored three different scripts which effectively perform all the same tasks. These are commands.sh, commands.js, and commands.py and they incude the relevant helper functions and calls to GET, POST, PUT, and DELETE data from the transactions.json file, which ultimately stores all transactions that the user inputs.
 
 ## Instructions on how to programmatically REQUEST data
 
@@ -46,7 +46,7 @@ await getRequest('http://localhost:3000/transaction/get')
 
 Helper function:
 ```
-def get_request(url):
+def getRequest(url):
     print(f"Making GET request to {url}")
     response = requests.get(url)
     print(response.text)
@@ -54,7 +54,7 @@ def get_request(url):
 
 Call:
 ```
-get_request('http://localhost:3000/transaction/get')
+getRequest('http://localhost:3000/transaction/get')
 ```
 
 ## Instructions on how to programmatically POST data
@@ -101,7 +101,7 @@ await sendDataRequest('post', 'http://localhost:3000/transaction/post', { id: 1,
 
 Helper function:
 ```
-def send_data_request(method, url, data):
+def sendDataRequest(method, url, data):
     print(f"Making {method} request to {url}")
     response = requests.request(method, url, json=data)
     print(response.text)
@@ -109,7 +109,7 @@ def send_data_request(method, url, data):
 
 Call:
 ```
-send_data_request('post', 'http://localhost:3000/transaction/post', {'id': 1, 'amount': 100, 'description': 'Test transaction'})
+sendDataRequest('post', 'http://localhost:3000/transaction/post', {'id': 1, 'amount': 100, 'description': 'Test transaction'})
 ```
 
 ## Instructions on how to programmatically UPDATE data
@@ -156,7 +156,7 @@ await sendDataRequest('put', 'http://localhost:3000/transaction/put/1', { amount
 
 Helper function:
 ```
-def send_data_request(method, url, data):
+def sendDataRequest(method, url, data):
     print(f"Making {method} request to {url}")
     response = requests.request(method, url, json=data)
     print(response.text)
@@ -164,7 +164,7 @@ def send_data_request(method, url, data):
 
 Call:
 ```
-send_data_request('put', 'http://localhost:3000/transaction/put/1', {'amount': 200, 'description': 'Updated transaction'})
+sendDataRequest('put', 'http://localhost:3000/transaction/put/1', {'amount': 200, 'description': 'Updated transaction'})
 ```
 
 ## Instructions on how to programmatically DELETE data
@@ -211,7 +211,7 @@ await sendDataRequest('delete', 'http://localhost:3000/transaction/delete/1')
 
 Helper function:
 ```
-def send_data_request(method, url, data):
+def sendDataRequest(method, url, data):
     print(f"Making {method} request to {url}")
     response = requests.request(method, url, json=data)
     print(response.text)
@@ -219,9 +219,83 @@ def send_data_request(method, url, data):
 
 Call:
 ```
-send_data_request('delete', 'http://localhost:3000/transaction/delete/1', {})
+sendDataRequest('delete', 'http://localhost:3000/transaction/delete/1', {})
 ```
 
 ## Instructions on how to programmatically RECEIVE data
 
-Because the data with the GET functionality is already returned upon every request, I will focus this section on how one might get the data (which by default is outputted to the console or standard out) and then read from it.
+Because the data with the GET functionality is already returned upon every request, I will focus this section on how one might get the data (which by default is outputted to the console or standard out) and then read from it. My recommended approach will be to store the output in either a variable or in a file. From there, my partner can either use the variable where ever they want or they could read and parse the file.
+
+1. Step one involves how one would store the output of the GET request into a file with the command line. To do so, all you need to do is add a ```> <outputFileName>``` at the end.
+
+For example, 
+```
+curl -X GET http://localhost:3000/transaction/get > outputfile.txt
+```
+or
+```
+./commands.sh > outputfile.txt
+```
+
+2. Step two involves how one would store the output of the GET request into a file or variable with server-side JavaScript. To store as a file, you can simply import fs and then modify the getRequest function I provided in the commands.js file. To store as a variable, you can simply modify the getRequest function and change the call a bit.
+
+For example, to store in a file:
+```
+const fs = require('fs')
+...
+const getRequest = async (url) => {
+    console.log(`\nPerforming GET request to ${url}\n`)
+    try {
+        const response = await axios.get(url)
+        console.log(response.data)
+        fs.writeFileSync('output.txt', JSON.stringify(response.data) + '\n', { flag: 'a' })
+    } catch (error) {
+        console.error(`Error: ${error}`)
+    }
+}
+```
+or to store in a variable:
+```
+const getRequest = async (url) => {
+    console.log(`\nPerforming GET request to ${url}\n`)
+    try {
+        const response = await axios.get(url)
+        console.log(response.data)
+        return response.data
+    } catch (error) {
+        console.error(`Error: ${error}`)
+        return null
+    }
+}
+...
+const data1 = await getRequest('http://localhost:3000/transaction/get')
+```
+
+3. Step three involves how one would store the output of the GET request into a file or variable with Python's Flask framework. To store as a file, you can simply edit the get_request function I provided in the commands.py file. To store as a variable, you can simply modify the getRequest function and change the call a bit.
+
+For example, to store in a file:
+```
+def getRequest(url):
+    print(f"Performing GET request to {url}")
+    response = requests.get(url)
+    print(response.text)
+
+    with open('output.txt', 'w') as file:
+        file.write(response.text + '\n')
+```
+or to store in a variable:
+```
+def getRequest(url):
+    print(f"Performing GET request to {url}")
+    try:
+        response = requests.get(url)
+        print(response.text)
+        return response.text
+    except requests.RequestException as error:
+        print(f"Error: {error}")
+        return None
+...
+data1 = getRequest('http://localhost:3000/transaction/get')
+```
+
+## UML Diagram
