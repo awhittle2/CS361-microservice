@@ -299,3 +299,7 @@ data1 = getRequest('http://localhost:3000/transaction/get')
 ```
 
 ## UML Diagram
+
+![Picture of UML Diagram](uml-diagram.jpg)
+
+Note: I included 3 main objects instead of 2 because I was basing it off of my partner's code, the script I wrote to test my microservice, and my microservice. Moreover, while the script/function for getting information from my microservice does not need to be it's own entity, I highly recommend that it is because abstracting the individual details out and having functions or helper functions will help to maintain the readability of the code.
